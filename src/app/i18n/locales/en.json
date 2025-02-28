@@ -1,0 +1,82 @@
+{
+  "ui-kits-title": "UI Kits (English)",
+  "ui-kits-title-buttons": "Buttons:",
+  "ui-kits-title-toggle-buttons": "Toggle Buttons:",
+  "ui-kits-title-radio-buttons": "Radio Buttons:",
+  "ui-kits-title-inputs": "Inputs:",
+  "ui-kits-title-check-boxes": "Check Boxes:",
+  "ui-kits-title-badges": "Badges:",
+  "ui-kits-title-selects": "Selects:",
+  "ui-kits-title-sliders": "Sliders:",
+  "ui-kits-title-switches": "Switches:",
+  "ui-kits-title-text-fields": "Text Fields:",
+  "ui-kits-title-progress-loaders": "Progress Loaders:",
+  "ui-kits-title-skeleton-loaders": "Skeleton Loaders:",
+  "click-me": "Click me!",
+  "app": {
+    "name": "BookNest"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "button": "Sign In",
+    "success": "Login successful",
+    "error": "Invalid username or password",
+    "login": "Login",
+    "register": "Register"
+  },
+  "user": {
+    "greeting": "Welcome, {{name}}!",
+    "logout": "Logout",
+    "userInfo": "User: {{name}}, Role: {{role}}"
+  },
+  "mainPage": {
+    "welcome": "Welcome to the Library",
+    "search": "Search for a book...",
+    "readInside": "Read inside the library",
+    "borrowOutside": "Borrow for home reading",
+    "borrowPeriod": "Enter borrowing period (days)",
+    "bookNow": "Reserve",
+    "author": "Author",
+    "close": "Close",
+    "borrowPeriodNote": "Maximum borrowing period is {{maxDays}} days.",
+    "noResults": "No results found"
+  },
+  "search": {
+    "placeholder": "Search for books...",
+    "no_results": "No books found."
+  },
+  "book": {
+    "title": "Title",
+    "author": "Author",
+    "description": "Description",
+    "availability": "Availability",
+    "available": "Available",
+    "not_available": "Not Available",
+    "reserve": "Reserve",
+    "read_inside": "Read Inside",
+    "take_home": "Take Home",
+    "select_period": "Select period"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "panel": "Admin Panel",
+    "addBook": "Add Book",
+    "editBook": "Edit Book",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "bookTitle": "Title",
+    "bookAuthor": "Author",
+    "bookDescription": "Description",
+    "edit": "Edit",
+    "titleField": "Title",
+    "authorField": "Author",
+    "descriptionField": "Description"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page:",
+    "displayedRows": "Showing {{from}}-{{to}} of {{count}}",
+    "moreThan": "more than {{count}}"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "ui-kits-title": "UI Kits (Russian)",
+  "ui-kits-title-buttons": "Кнопки:",
+  "click-me": "Нажми меня",
+  "app": {
+    "name": "BookNest"
+  },
+  "login": {
+    "title": "Вход",
+    "username": "Логин",
+    "password": "Пароль",
+    "button": "Войти",
+    "success": "Успешный вход",
+    "error": "Неверный логин или пароль",
+    "login": "Войти",
+    "register": "Регистрация"
+  },
+  "user": {
+    "greeting": "Добро пожаловать, {{name}}!",
+    "logout": "Выйти",
+    "userInfo": "Пользователь: {{name}}, Роль: {{role}}"
+  },
+  "mainPage": {
+    "welcome": "Добро пожаловать в библиотеку",
+    "search": "Поиск книги...",
+    "readInside": "Читать в библиотеке",
+    "borrowOutside": "Взять для чтения на дом",
+    "borrowPeriod": "Введите период бронирования (дни)",
+    "bookNow": "Забронировать",
+    "author": "Автор",
+    "close": "Закрыть",
+    "borrowPeriodNote": "Максимальный срок бронирования — {{maxDays}} дней.",
+    "noResults": "Результаты не найдены"
+  },
+  "search": {
+    "placeholder": "Поиск книг...",
+    "no_results": "Книги не найдены."
+  },
+  "book": {
+    "title": "Название",
+    "author": "Автор",
+    "description": "Описание",
+    "availability": "Доступность",
+    "available": "Доступна",
+    "not_available": "Недоступна",
+    "reserve": "Забронировать",
+    "read_inside": "Читать в библиотеке",
+    "take_home": "Взять домой",
+    "select_period": "Выберите период"
+  },
+  "admin": {
+    "title": "Административная панель",
+    "panel": "Панель администратора",
+    "addBook": "Добавить книгу",
+    "editBook": "Редактировать книгу",
+    "saveChanges": "Сохранить изменения",
+    "cancel": "Отмена",
+    "bookTitle": "Название",
+    "bookAuthor": "Автор",
+    "bookDescription": "Описание",
+    "edit": "Редактировать",
+    "titleField": "Название",
+    "authorField": "Автор",
+    "descriptionField": "Описание"
+  },
+  "table": {
+    "rowsPerPage": "Строк на странице:",
+    "displayedRows": "Показано {{from}}-{{to}} из {{count}}",
+    "moreThan": "больше чем {{count}}"
+  }
+}

@@ -1,0 +1,19 @@
+@import "reset";
+@import "colors-variables";
+@import "text-variables";
+@import "variables";
+
+html {
+    min-block-size: 100vh;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    background: $gray-100;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+
+    margin: 0 auto;
+}

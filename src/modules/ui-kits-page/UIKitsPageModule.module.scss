@@ -1,0 +1,15 @@
+@import "app/styles/custom";
+
+.ui__kits {
+    padding: 50px 0;
+
+    text-align: center;
+
+    &__title {
+        font-size: 32px;
+    }
+
+    &__subtitle {
+        font-size: 24px;
+    }
+}

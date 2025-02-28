@@ -1,0 +1,29 @@
+$text-small: 12px;
+$line-height-small: 14px;
+$weight-small: 400;
+
+$text-medium: 14px;
+$line-height-medium: 18px;
+$weight-medium: 500;
+
+$text-large: 16px;
+$line-height-large: 20.8px;
+$weight-large: 600;
+
+@mixin text-small {
+    font-size: $text-small;
+    line-height: $line-height-small;
+    font-weight: $weight-small;
+}
+
+@mixin text-medium {
+    font-size: $text-medium;
+    line-height: $line-height-medium;
+    font-weight: $weight-medium;
+}
+
+@mixin text-large {
+    font-size: $text-large;
+    line-height: $line-height-large;
+    font-weight: $weight-large;
+}

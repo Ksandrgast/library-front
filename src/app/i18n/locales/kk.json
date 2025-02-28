@@ -1,0 +1,71 @@
+{
+  "ui-kits-title": "UI Kits (Kazakh)",
+  "ui-kits-title-buttons": "Түймелер:",
+  "click-me": "Мені бас!",
+  "app": {
+    "name": "BookNest"
+  },
+  "login": {
+    "title": "Кіру",
+    "username": "Пайдаланушы аты",
+    "password": "Құпия сөз",
+    "button": "Кіру",
+    "success": "Сәтті кіру",
+    "error": "Қате логин немесе құпия сөз",
+    "login": "Кіру",
+    "register": "Тіркелу"
+  },
+  "user": {
+    "greeting": "Қош келдіңіз, {{name}}!",
+    "logout": "Шығу",
+    "userInfo":  "Пайдаланушы: {{name}}, Рөлі: {{role}}"
+  },
+  "mainPage": {
+    "welcome": "Кітапханаға қош келдіңіз",
+    "search": "Кітапты іздеу...",
+    "readInside": "Кітапханадан оқу",
+    "borrowOutside": "Үйге алу",
+    "borrowPeriod": "Брондау мерзімін енгізіңіз (күндер)",
+    "bookNow": "Брондау",
+    "author": "Автор",
+    "close": "Жабу",
+    "borrowPeriodNote": "Қарызға алу мерзімі {{maxDays}} күннен аспауы керек.",
+    "noResults": "Нәтижелер табылмады"
+  },
+  "search": {
+    "placeholder": "Кітаптарды іздеу...",
+    "no_results": "Кітаптар табылмады."
+  },
+  "book": {
+    "title": "Атауы",
+    "author": "Автор",
+    "description": "Сипаттама",
+    "availability": "Қол жетімділік",
+    "available": "Қол жетімді",
+    "not_available": "Қол жетімсіз",
+    "reserve": "Брондау",
+    "read_inside": "Кітапханада оқу",
+    "take_home": "Үйге алу",
+    "select_period": "Мерзімді таңдаңыз"
+  },
+  "admin": {
+    "title": "Әкімшілік панелі",
+    "panel": "Әкімші панелі",
+    "addBook": "Кітап қосу",
+    "editBook": "Кітапты өңдеу",
+    "saveChanges": "Өзгерістерді сақтау",
+    "cancel": "Бас тарту",
+    "bookTitle": "Атауы",
+    "bookAuthor": "Авторы",
+    "bookDescription": "Сипаттамасы",
+    "edit": "Өңдеу",
+    "titleField": "Атауы",
+    "authorField": "Авторы",
+    "descriptionField": "Сипаттамасы"
+  },
+  "table": {
+    "rowsPerPage": "Беттегі жолдар саны:",
+    "displayedRows": "{{count}} ішінен {{from}}-{{to}} көрсетілді",
+    "moreThan": "{{count}}-ден көп"
+  }
+}
