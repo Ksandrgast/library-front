@@ -48,9 +48,8 @@
     "take_home": "Үйге алу",
     "select_period": "Мерзімді таңдаңыз"
   },
-  "admin": {
+  "librarian": {
     "title": "Әкімшілік панелі",
-    "panel": "Әкімші панелі",
     "addBook": "Кітап қосу",
     "editBook": "Кітапты өңдеу",
     "saveChanges": "Өзгерістерді сақтау",
@@ -63,9 +62,34 @@
     "authorField": "Авторы",
     "descriptionField": "Сипаттамасы"
   },
+  "admin": {
+    "title": "Кітапханашы панелі"
+  },
   "table": {
     "rowsPerPage": "Беттегі жолдар саны:",
     "displayedRows": "{{count}} ішінен {{from}}-{{to}} көрсетілді",
     "moreThan": "{{count}}-ден көп"
+  },
+  "categories": {
+    "title": "Санаттар",
+    "name": "Атауы (латиница)",
+    "titleRu": "Атауы (орысша)",
+    "titleKk": "Атауы (қазақша)",
+    "titleEn": "Атауы (ағылшынша)",
+    "add": "Санат қосу"
+  },
+  "locations": {
+    "title": "Сақтау мекенжайлары",
+    "floor": "Қабат",
+    "room": "Бөлме/қойма",
+    "row": "Қатар",
+    "shelf": "Сөре/бөлім",
+    "add": "Мекенжай қосу"
+  },
+  "error": {
+    "fetchCategoriesFailed": "Санаттарды жүктеу қатесі.",
+    "fetchLocationsFailed": "Мекенжайларды жүктеу қатесі.",
+    "addCategoryFailed": "Санатты қосу мүмкін болмады.",
+    "addLocationFailed": "Мекенжайды қосу мүмкін болмады."
   }
 }

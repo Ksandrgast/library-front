@@ -7,11 +7,13 @@ import LogInPage from "./pages/login-page";
 import MainPage from "./pages/main-page";
 import UIKitsPage from "./pages/ui-kits-page";
 import AdminPage from "./pages/admin-page";
+import LibrarianPage from "./pages/librarian-page";
 
 const routes = [
     {path: '/', element: <MainPage/>},
     {path: '/login', element: <LogInPage/>},
     {path: '/admin', element: <AdminPage/>},
+    {path: '/librarian', element: <LibrarianPage/>},
     {path: '/ui-kits', element: <UIKitsPage/>},
     {path: '*', element: <Navigate to="/" replace/>}
 ];

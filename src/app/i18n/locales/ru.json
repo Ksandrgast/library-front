@@ -48,9 +48,8 @@
     "take_home": "Взять домой",
     "select_period": "Выберите период"
   },
-  "admin": {
-    "title": "Административная панель",
-    "panel": "Панель администратора",
+  "librarian": {
+    "title": "Панель библиотекаря",
     "addBook": "Добавить книгу",
     "editBook": "Редактировать книгу",
     "saveChanges": "Сохранить изменения",
@@ -63,9 +62,34 @@
     "authorField": "Автор",
     "descriptionField": "Описание"
   },
+  "admin": {
+    "title": "Панель администратора"
+  },
   "table": {
     "rowsPerPage": "Строк на странице:",
     "displayedRows": "Показано {{from}}-{{to}} из {{count}}",
     "moreThan": "больше чем {{count}}"
+  },
+  "categories": {
+    "title": "Категории",
+    "name": "Название (латиницей)",
+    "titleRu": "Название (русский)",
+    "titleKk": "Название (казахский)",
+    "titleEn": "Название (английский)",
+    "add": "Добавить категорию"
+  },
+  "locations": {
+    "title": "Адреса хранения",
+    "floor": "Этаж",
+    "room": "Комната/склад",
+    "row": "Ряд",
+    "shelf": "Полка/секция",
+    "add": "Добавить адрес"
+  },
+  "error": {
+    "fetchCategoriesFailed": "Ошибка загрузки категорий.",
+    "fetchLocationsFailed": "Ошибка загрузки адресов.",
+    "addCategoryFailed": "Не удалось добавить категорию.",
+    "addLocationFailed": "Не удалось добавить адрес."
   }
 }

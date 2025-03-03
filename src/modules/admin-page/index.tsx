@@ -1,138 +1,217 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, TextField, Button, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TablePagination } from "@mui/material";
-import Layout from "../../components/Layout";
+import {
+    Container,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    CircularProgress,
+    Alert,
+    IconButton,
+    TextField,
+    Button
+} from "@mui/material";
+import { AddCircle, Save, Cancel, Edit, Delete } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { fetchFromAPI } from "../../utils/api";
 
 const AdminPage: React.FC = () => {
     const { t } = useTranslation();
-    const location = useLocation();
+    const [categories, setCategories] = useState<any[]>([]);
+    const [locations, setLocations] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editedData, setEditedData] = useState<any | null>(null);
+    const [newCategory, setNewCategory] = useState<any | null>(null);
+    const [newLocation, setNewLocation] = useState<any | null>(null);
 
-    // 📌 Книги по умолчанию
-    const [books, setBooks] = useState([
-        { id: 1, title: "Test Book 1", author: "Author 1", description: "Description of Test Book 1", category: "fiction" },
-        { id: 2, title: "Test Book 2", author: "Author 2", description: "Description of Test Book 2", category: "science" },
-        { id: 3, title: "Test Book 3", author: "Author 3", description: "Description of Test Book 3", category: "history" },
-        { id: 4, title: "Test Book 4", author: "Author 4", description: "Description of Test Book 4", category: "technology" },
-        { id: 5, title: "Test Book 5", author: "Author 5", description: "Description of Test Book 5", category: "fiction" },
-        { id: 6, title: "Test Book 6", author: "Author 6", description: "Description of Test Book 6", category: "science" },
-        { id: 7, title: "Test Book 7", author: "Author 7", description: "Description of Test Book 7", category: "history" },
-        { id: 8, title: "Test Book 8", author: "Author 8", description: "Description of Test Book 8", category: "technology" }
-    ]);
-
-    const [filteredBooks, setFilteredBooks] = useState(books);
-
-    // 📌 Обновляем `searchQuery` при изменении URL
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const query = params.get("search") || "";
-        const category = params.get("category") || "";
-
-        setFilteredBooks(
-            books.filter(book =>
-                (query ? book.title.toLowerCase().includes(query.toLowerCase()) || book.author.toLowerCase().includes(query.toLowerCase()) : true) &&
-                (category ? book.category === category : true) // Фильтр по категории
-            )
-        );
-    }, [location.search, books]);
-
-    const [newBook, setNewBook] = useState<{ id: number; title: string; author: string; description: string; category: string  }>({
-        id: 0,
-        title: "",
-        author: "",
-        description: "",
-        category: ""
-    });
-
-    const [openModal, setOpenModal] = useState(false);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setNewBook((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSaveBook = () => {
-        if (newBook.title && newBook.author && newBook.description) {
-            if (newBook.id !== 0) {
-                setBooks(books.map(book => (book.id === newBook.id ? newBook : book)));
-            } else {
-                setBooks([...books, { ...newBook, id: books.length + 1 }]);
+        const fetchData = async () => {
+            try {
+                const categoriesData = await fetchFromAPI("/categories");
+                setCategories(categoriesData);
+            } catch {
+                setError(t("error.fetchCategoriesFailed"));
             }
-            setNewBook({ id: 0, title: "", author: "", description: "", category: "" });
-            setOpenModal(false);
+
+            try {
+                const locationsData = await fetchFromAPI("/locations");
+                setLocations(locationsData);
+            } catch {
+                setError(t("error.fetchLocationsFailed"));
+            }
+
+            setLoading(false);
+        };
+        fetchData();
+    }, [t]);
+
+    const handleSaveCategory = async () => {
+        if (!newCategory) return;
+        try {
+            const savedCategory = await fetchFromAPI("/categories", { method: "POST", body: JSON.stringify(newCategory) });
+            setCategories([...categories, savedCategory]);
+            setNewCategory(null);
+        } catch {
+            setError(t("error.addCategoryFailed"));
         }
     };
 
-    const handleEditBook = (book: { id: number; title: string; author: string; description: string; category: string }) => {
-        setNewBook(book);
-        setOpenModal(true);
+    const handleSaveLocation = async () => {
+        if (!newLocation) return;
+        try {
+            const savedLocation = await fetchFromAPI("/locations", { method: "POST", body: JSON.stringify(newLocation) });
+            setLocations([...locations, savedLocation]);
+            setNewLocation(null);
+        } catch {
+            setError(t("error.addLocationFailed"));
+        }
     };
 
-    const handleOpenModal = () => {
-        setNewBook({ id: 0, title: "", author: "", description: "", category: "" });
-        setOpenModal(true);
+    const handleEdit = (id: string, data: any) => {
+        setEditingId(id);
+        setEditedData({ ...data });
     };
 
-    const handleCloseModal = () => {
-        setOpenModal(false);
+    const handleSave = async (id: string, type: string) => {
+        try {
+            await fetchFromAPI(`/${type}/${id}`, { method: "PUT", body: JSON.stringify(editedData) });
+            if (type === "categories") {
+                setCategories(categories.map(item => (item.id === id ? editedData : item)));
+            } else {
+                setLocations(locations.map(item => (item.id === id ? editedData : item)));
+            }
+            setEditingId(null);
+        } catch {
+            setError(t("error.updateFailed"));
+        }
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+    const handleDelete = async (id: string, type: string) => {
+        try {
+            await fetchFromAPI(`/${type}/${id}`, { method: "DELETE" });
+            if (type === "categories") {
+                setCategories(categories.filter(item => item.id !== id));
+            } else {
+                setLocations(locations.filter(item => item.id !== id));
+            }
+        } catch {
+            setError(t("error.deleteFailed"));
+        }
     };
 
     return (
-        <Layout>
-            <Container>
-                <Typography variant="h4" gutterBottom>
-                    {t("admin.title")}
-                </Typography>
-                <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mb: 2 }}>
-                    {t("admin.addBook")}
-                </Button>
-                {filteredBooks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((book) => (
-                    <Card key={book.id} sx={{ mt: 2 }}>
-                        <CardContent>
-                            <Typography variant="h5">{book.title}</Typography>
-                            <Typography variant="subtitle1">{book.author}</Typography>
-                            <Typography>{book.description}</Typography>
-                            <Button onClick={() => handleEditBook(book)}>{t("admin.edit")}</Button>
-                        </CardContent>
-                    </Card>
-                ))}
-                <TablePagination
-                    component="div"
-                    count={filteredBooks.length}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    labelRowsPerPage={t("table.rowsPerPage")}
-                    labelDisplayedRows={({ from, to, count }) =>
-                        t("table.displayedRows", { from, to, count: count !== -1 ? count : Number(t("table.moreThan", { count: to })) })
-                    }
-                />
-                <Dialog open={openModal} onClose={handleCloseModal} fullWidth>
-                    <DialogTitle>{newBook.id !== 0 ? t("admin.editBook") : t("admin.addBook")}</DialogTitle>
-                    <DialogContent>
-                        <TextField label={t("admin.titleField")} name="title" value={newBook.title} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
-                        <TextField label={t("admin.authorField")} name="author" value={newBook.author} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
-                        <TextField label={t("admin.descriptionField")} name="description" value={newBook.description} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseModal}>{t("admin.cancel")}</Button>
-                        <Button variant="contained" color="primary" onClick={handleSaveBook}>{newBook.id !== 0 ? t("admin.saveChanges") : t("admin.addBook")}</Button>
-                    </DialogActions>
-                </Dialog>
-            </Container>
-        </Layout>
+        <Container>
+            <Typography variant="h4" gutterBottom>{t("categories.title")}</Typography>
+            {loading && <CircularProgress />}
+            {error && <Alert severity="error">{error}</Alert>}
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>{t("categories.name")}</TableCell>
+                            <TableCell>{t("categories.titleRu")}</TableCell>
+                            <TableCell>{t("categories.titleKk")}</TableCell>
+                            <TableCell>{t("categories.titleEn")}</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {categories.map((category) => (
+                            <TableRow key={category.id}>
+                                {editingId === category.id ? (
+                                    <>
+                                        <TableCell><TextField value={editedData.name} onChange={(e) => setEditedData({ ...editedData, name: e.target.value })} /></TableCell>
+                                        <TableCell><TextField value={editedData.titleRu} onChange={(e) => setEditedData({ ...editedData, titleRu: e.target.value })} /></TableCell>
+                                        <TableCell><TextField value={editedData.titleKk} onChange={(e) => setEditedData({ ...editedData, titleKk: e.target.value })} /></TableCell>
+                                        <TableCell><TextField value={editedData.titleEn} onChange={(e) => setEditedData({ ...editedData, titleEn: e.target.value })} /></TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={() => handleSave(category.id, "categories")}><Save /></IconButton>
+                                            <IconButton onClick={() => setEditingId(null)}><Cancel /></IconButton>
+                                        </TableCell>
+                                    </>
+                                ) : (
+                                    <>
+                                        <TableCell>{category.name}</TableCell>
+                                        <TableCell>{category.titleRu}</TableCell>
+                                        <TableCell>{category.titleKk}</TableCell>
+                                        <TableCell>{category.titleEn}</TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={() => handleEdit(category.id, category)}><Edit /></IconButton>
+                                            <IconButton onClick={() => handleDelete(category.id, "categories")}><Delete /></IconButton>
+                                        </TableCell>
+                                    </>
+                                )}
+                            </TableRow>
+                        ))}
+                        {newCategory && (
+                            <TableRow>
+                                <TableCell><TextField value={newCategory.name} onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newCategory.titleRu} onChange={(e) => setNewCategory({ ...newCategory, titleRu: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newCategory.titleKk} onChange={(e) => setNewCategory({ ...newCategory, titleKk: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newCategory.titleEn} onChange={(e) => setNewCategory({ ...newCategory, titleEn: e.target.value })} /></TableCell>
+                                <TableCell>
+                                    <IconButton onClick={handleSaveCategory}><Save /></IconButton>
+                                    <IconButton onClick={() => setNewCategory(null)}><Cancel /></IconButton>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Button onClick={() => setNewCategory({ name: "", titleRu: "", titleKk: "", titleEn: "" })}>
+                <AddCircle /> {t("categories.add")}
+            </Button>
+
+            <Typography variant="h4" gutterBottom>{t("locations.title")}</Typography>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>{t("locations.floor")}</TableCell>
+                            <TableCell>{t("locations.room")}</TableCell>
+                            <TableCell>{t("locations.row")}</TableCell>
+                            <TableCell>{t("locations.shelf")}</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {locations.map((location) => (
+                            <TableRow key={location.id}>
+                                <TableCell>{location.floor}</TableCell>
+                                <TableCell>{location.room}</TableCell>
+                                <TableCell>{location.row}</TableCell>
+                                <TableCell>{location.shelf}</TableCell>
+                                <TableCell>
+                                    <IconButton onClick={() => handleEdit(location.id, location)}><Edit /></IconButton>
+                                    <IconButton onClick={() => handleDelete(location.id, "locations")}><Delete /></IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {newLocation && (
+                            <TableRow>
+                                <TableCell><TextField value={newLocation.floor} onChange={(e) => setNewLocation({ ...newLocation, floor: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newLocation.room} onChange={(e) => setNewLocation({ ...newLocation, room: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newLocation.row} onChange={(e) => setNewLocation({ ...newLocation, row: e.target.value })} /></TableCell>
+                                <TableCell><TextField value={newLocation.shelf} onChange={(e) => setNewLocation({ ...newLocation, shelf: e.target.value })} /></TableCell>
+                                <TableCell>
+                                    <IconButton onClick={handleSaveLocation}><Save /></IconButton>
+                                    <IconButton onClick={() => setNewLocation(null)}><Cancel /></IconButton>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Button onClick={() => setNewLocation({ floor: "", room: "", row: "", shelf: "" })}>
+                <AddCircle /> {t("locations.add")}
+            </Button>
+        </Container>
     );
 };
 

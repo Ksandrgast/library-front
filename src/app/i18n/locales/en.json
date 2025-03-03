@@ -59,9 +59,8 @@
     "take_home": "Take Home",
     "select_period": "Select period"
   },
-  "admin": {
-    "title": "Admin Panel",
-    "panel": "Admin Panel",
+  "librarian": {
+    "title": "Librarian Panel",
     "addBook": "Add Book",
     "editBook": "Edit Book",
     "saveChanges": "Save Changes",
@@ -74,9 +73,34 @@
     "authorField": "Author",
     "descriptionField": "Description"
   },
+  "admin": {
+    "title": "Admin Panel"
+  },
   "table": {
     "rowsPerPage": "Rows per page:",
     "displayedRows": "Showing {{from}}-{{to}} of {{count}}",
     "moreThan": "more than {{count}}"
+  },
+  "categories": {
+    "title": "Categories",
+    "name": "Name (Latin)",
+    "titleRu": "Name (Russian)",
+    "titleKk": "Name (Kazakh)",
+    "titleEn": "Name (English)",
+    "add": "Add category"
+  },
+  "locations": {
+    "title": "Storage Locations",
+    "floor": "Floor",
+    "room": "Room/Warehouse",
+    "row": "Row",
+    "shelf": "Shelf/Section",
+    "add": "Add location"
+  },
+  "error": {
+    "fetchCategoriesFailed": "Failed to load categories.",
+    "fetchLocationsFailed": "Failed to load locations.",
+    "addCategoryFailed": "Failed to add category.",
+    "addLocationFailed": "Failed to add location."
   }
 }
