@@ -65,7 +65,7 @@ const MainPage: React.FC = () => {
             books.filter(book =>
                 (query ? book.title.toLowerCase().includes(query.toLowerCase())
                     || book.authors.some((author: string) => author.toLowerCase().includes(query.toLowerCase())) : true)
-                && (category ? book.category === category : true)
+                && (category ? book.categoryId === category : true)
             )
         );
     }, [location.search, books]);
@@ -118,6 +118,7 @@ const MainPage: React.FC = () => {
                                     <Typography variant="subtitle1">
                                         {t("mainPage.author")}: {book.authors.join(", ")}
                                     </Typography>
+                                    <Typography>{t("mainPage.yearField")}: {book.year}</Typography>
                                 </CardContent>
                             </Card>
                         ))}
@@ -146,6 +147,7 @@ const MainPage: React.FC = () => {
                     <DialogTitle>{selectedBook?.title}</DialogTitle>
                     <DialogContent>
                         <Typography>{t("mainPage.author")}: {selectedBook?.authors.join(", ")}</Typography>
+                        <Typography>{t("mainPage.yearField")}: {selectedBook?.year}</Typography>
                         <Typography>{selectedBook?.description}</Typography>
                         <Select value={bookingType} onChange={handleBookingTypeChange} fullWidth sx={{ mt: 2 }}>
                             <MenuItem value="inside">{t("mainPage.readInside")}</MenuItem>

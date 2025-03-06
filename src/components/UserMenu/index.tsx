@@ -14,10 +14,10 @@ const UserMenu: React.FC = () => {
         <div style={{ display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
             {user ? (
                 <>
-                    <img src={user.avatar} alt="User avatar" style={{ width: 40, height: 40, borderRadius: "50%" }} />
+                    {/*<img src={user.avatar} alt="User avatar" style={{ width: 40, height: 40, borderRadius: "50%" }} />*/}
                     <div style={{ display: "grid" }}>
                         <Typography>{user.name}</Typography>
-                        <Typography variant="body2">{user.role}</Typography>
+                        <Typography variant="body2">{t(`roles.${user.role}`)}</Typography>
                     </div>
                     <IconButton onClick={logout} sx={{ color: "white" }}>
                         <LogoutIcon />

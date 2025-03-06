@@ -1,28 +1,97 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, TextField, Button, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, TablePagination } from "@mui/material";
+import {
+    Container, Typography, TextField, Button, Card, CardContent, Dialog, DialogTitle,
+    DialogContent, DialogActions, TablePagination, FormControl, InputLabel, Select, MenuItem
+} from "@mui/material";
 import Layout from "../../components/Layout";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { fetchFromAPI } from "../../utils/api";
+import {useLocation} from "react-router-dom";
+
+interface Category {
+    id: string;
+    titleRu: string;
+    titleKk: string;
+    titleEn: string;
+}
+
+interface Location {
+    id: string;
+    floor: string;
+    room: string;
+    row: string;
+    shelf: string;
+}
+
+interface Book {
+    id: string;
+    title: string;
+    authors: string[];
+    description: string;
+    year: number;
+    quantity: number;
+    categoryId: string;
+    locationId: string;
+}
+
+const emtyBook = {
+    id: "",
+    title: "",
+    authors: [],
+    description: "",
+    year: new Date().getFullYear(),
+    quantity: 1,
+    categoryId: "",
+    locationId: ""
+};
 
 const LibrarianPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const [books, setBooks] = useState<Book[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [locations, setLocations] = useState<Location[]>([]);
+    const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+    const [newBook, setNewBook] = useState<Book>(emtyBook);
+    const [openModal, setOpenModal] = useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     const location = useLocation();
 
-    // 📌 Книги по умолчанию
-    const [books, setBooks] = useState([
-        { id: 1, title: "Test Book 1", author: "Author 1", description: "Description of Test Book 1", category: "fiction" },
-        { id: 2, title: "Test Book 2", author: "Author 2", description: "Description of Test Book 2", category: "science" },
-        { id: 3, title: "Test Book 3", author: "Author 3", description: "Description of Test Book 3", category: "history" },
-        { id: 4, title: "Test Book 4", author: "Author 4", description: "Description of Test Book 4", category: "technology" },
-        { id: 5, title: "Test Book 5", author: "Author 5", description: "Description of Test Book 5", category: "fiction" },
-        { id: 6, title: "Test Book 6", author: "Author 6", description: "Description of Test Book 6", category: "science" },
-        { id: 7, title: "Test Book 7", author: "Author 7", description: "Description of Test Book 7", category: "history" },
-        { id: 8, title: "Test Book 8", author: "Author 8", description: "Description of Test Book 8", category: "technology" }
-    ]);
+    useEffect(() => {
+        const loadBooks = async () => {
+            try {
+                const booksData = await fetchFromAPI("/books");
+                setBooks(booksData);
+                setFilteredBooks(booksData);
+            } catch (error) {
+                console.error("Ошибка загрузки книг:", error);
+            }
+        };
 
-    const [filteredBooks, setFilteredBooks] = useState(books);
+        const loadCategories = async () => {
+            try {
+                const categoriesData = await fetchFromAPI("/categories");
+                setCategories(categoriesData);
+            } catch (error) {
+                console.error("Ошибка загрузки категорий:", error);
+            }
+        };
 
-    // Обновляем `searchQuery` при изменении URL
+        const loadLocations = async () => {
+            try {
+                const locationsData = await fetchFromAPI("/locations");
+                setLocations(locationsData);
+            } catch (error) {
+                console.error("Ошибка загрузки адресов:", error);
+            }
+        };
+
+        loadBooks();
+        loadCategories();
+        loadLocations();
+    }, []);
+
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const query = params.get("search") || "";
@@ -30,53 +99,68 @@ const LibrarianPage: React.FC = () => {
 
         setFilteredBooks(
             books.filter(book =>
-                (query ? book.title.toLowerCase().includes(query.toLowerCase()) || book.author.toLowerCase().includes(query.toLowerCase()) : true) &&
-                (category ? book.category === category : true) // Фильтр по категории
+                (query ? book.title.toLowerCase().includes(query.toLowerCase())
+                    || book.authors.some((author: string) => author.toLowerCase().includes(query.toLowerCase())) : true)
+                && (category ? book.categoryId === category : true)
             )
         );
     }, [location.search, books]);
 
-    const [newBook, setNewBook] = useState<{ id: number; title: string; author: string; description: string; category: string  }>({
-        id: 0,
-        title: "",
-        author: "",
-        description: "",
-        category: ""
-    });
-
-    const [openModal, setOpenModal] = useState(false);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
         const { name, value } = event.target;
-        setNewBook((prev) => ({ ...prev, [name]: value }));
+        setNewBook(prev => ({ ...prev, [name as string]: value }));
     };
 
-    const handleSaveBook = () => {
-        if (newBook.title && newBook.author && newBook.description) {
-            if (newBook.id !== 0) {
-                setBooks(books.map(book => (book.id === newBook.id ? newBook : book)));
-            } else {
-                setBooks([...books, { ...newBook, id: books.length + 1 }]);
-            }
-            setNewBook({ id: 0, title: "", author: "", description: "", category: "" });
-            setOpenModal(false);
-        }
+    const handleAuthorsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const authorsArray = event.target.value.split(",").map(author => author.trim());
+        setNewBook(prev => ({ ...prev, authors: authorsArray }));
     };
 
-    const handleEditBook = (book: { id: number; title: string; author: string; description: string; category: string }) => {
-        setNewBook(book);
+    const handleCategoryChange = (event: any) => {
+        setNewBook(prev => ({ ...prev, categoryId: event.target.value }));
+    };
+
+    const handleLocationChange = (event: any) => {
+        setNewBook(prev => ({ ...prev, locationId: event.target.value }));
+    };
+
+    const handleEditBook = (book: Book) => {
+        setNewBook({ ...book });
         setOpenModal(true);
     };
 
     const handleOpenModal = () => {
-        setNewBook({ id: 0, title: "", author: "", description: "", category: "" });
+        setNewBook(emtyBook);
         setOpenModal(true);
     };
 
-    const handleCloseModal = () => {
-        setOpenModal(false);
+    const handleSaveBook = async () => {
+        try {
+            if (!newBook.categoryId || !newBook.locationId) {
+                console.error("Ошибка: Категория и локация должны быть выбраны");
+                return;
+            }
+
+            // Создаём объект без id, если книга новая
+            const { id, ...bookData } = newBook.id ? newBook : { ...newBook, id: undefined };
+
+            if (newBook.id) {
+                await fetchFromAPI(`/books/${newBook.id}`, {
+                    method: "PUT",
+                    body: JSON.stringify(bookData)
+                });
+                setBooks(books.map(book => (book.id === newBook.id ? { ...book, ...bookData } : book)));
+            } else {
+                const createdBook = await fetchFromAPI("/books", {
+                    method: "POST",
+                    body: JSON.stringify(bookData)
+                });
+                setBooks([...books, createdBook]);
+            }
+            setOpenModal(false);
+        } catch (error) {
+            console.error("Ошибка сохранения книги:", error);
+        }
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -86,6 +170,16 @@ const LibrarianPage: React.FC = () => {
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    const getCategoryTitle = (categoryId: string) => {
+        const category = categories.find(cat => cat.id === categoryId);
+        return category ? (i18n.language === "kk" ? category.titleKk : i18n.language === "en" ? category.titleEn : category.titleRu) : "";
+    };
+
+    const getLocationTitle = (locationId: string) => {
+        const location = locations.find(loc => loc.id === locationId);
+        return location ? `${location.floor}, ${location.room}, ${location.row}, ${location.shelf}` : "";
     };
 
     return (
@@ -101,8 +195,12 @@ const LibrarianPage: React.FC = () => {
                     <Card key={book.id} sx={{ mt: 2 }}>
                         <CardContent>
                             <Typography variant="h5">{book.title}</Typography>
-                            <Typography variant="subtitle1">{book.author}</Typography>
-                            <Typography>{book.description}</Typography>
+                            <Typography variant="subtitle1">{t("librarian.authorsField")}: {book.authors.join(", ")}</Typography>
+                            <Typography>{t("librarian.descriptionField")}: {book.description}</Typography>
+                            <Typography>{t("librarian.yearField")}: {book.year}</Typography>
+                            <Typography>{t("librarian.quantity")}: {book.quantity}</Typography>
+                            <Typography>{t("librarian.category")}: {getCategoryTitle(book.categoryId)}</Typography>
+                            <Typography>{t("librarian.location")}: {getLocationTitle(book.locationId)}</Typography>
                             <Button onClick={() => handleEditBook(book)}>{t("librarian.edit")}</Button>
                         </CardContent>
                     </Card>
@@ -119,16 +217,85 @@ const LibrarianPage: React.FC = () => {
                         t("table.displayedRows", { from, to, count: count !== -1 ? count : Number(t("table.moreThan", { count: to })) })
                     }
                 />
-                <Dialog open={openModal} onClose={handleCloseModal} fullWidth>
-                    <DialogTitle>{newBook.id !== 0 ? t("librarian.editBook") : t("librarian.addBook")}</DialogTitle>
+                <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>
+                    <DialogTitle>{t("librarian.addBook")}</DialogTitle>
                     <DialogContent>
                         <TextField label={t("librarian.titleField")} name="title" value={newBook.title} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
-                        <TextField label={t("librarian.authorField")} name="author" value={newBook.author} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
+                        <TextField label={t("librarian.authorsField")} value={newBook.authors.join(", ")} onChange={handleAuthorsChange} fullWidth sx={{ mb: 2 }} />
                         <TextField label={t("librarian.descriptionField")} name="description" value={newBook.description} onChange={handleInputChange} fullWidth sx={{ mb: 2 }} />
+                        <TextField label={t("librarian.yearField")}
+                                   name="year" type="number"
+                                   inputProps={{ maxLength: 4, inputMode: "numeric", pattern: "\\d*" }}
+                                   value={newBook.year}
+                                   onChange={handleInputChange}
+                                   onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                       if (e.target.value.length > 4) {
+                                           e.target.value = e.target.value.slice(0, 4);
+                                       }
+                                   }}
+                                   fullWidth
+                                   sx={{
+                                       mb: 2,
+                                       "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button": {
+                                           WebkitAppearance: "none",
+                                           margin: 0,
+                                       },
+                                       "& input[type=number]": {
+                                           MozAppearance: "textfield",
+                                       },
+                                   }}/>
+                        <TextField label={t("librarian.quantity")} name="quantity"
+                                   type="number"
+                                   inputProps={{ maxLength: 5, inputMode: "numeric", pattern: "\\d*" }}
+                                   value={newBook.quantity}
+                                   onChange={handleInputChange}
+                                   onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                       if (e.target.value.length > 5) {
+                                           e.target.value = e.target.value.slice(0, 5);
+                                       }
+                                   }}
+                                   fullWidth
+                                   sx={{
+                                       mb: 2,
+                                       "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button": {
+                                           WebkitAppearance: "none",
+                                           margin: 0,
+                                       },
+                                       "& input[type=number]": {
+                                           MozAppearance: "textfield",
+                                       },
+                                   }}/>
+                        <FormControl fullWidth sx={{ mb: 2 }}>
+                            <InputLabel>{t("librarian.category")}</InputLabel>
+                            <Select
+                                value={newBook.categoryId || ""}
+                                onChange={handleCategoryChange}
+                            >
+                                {categories.map(cat => (
+                                    <MenuItem key={cat.id} value={cat.id}>
+                                        {getCategoryTitle(cat.id)}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <FormControl fullWidth sx={{ mb: 2 }}>
+                            <InputLabel>{t("librarian.location")}</InputLabel>
+                            <Select
+                                value={newBook.locationId || ""}
+                                onChange={handleLocationChange}
+                            >
+                                {locations.map(loc => (
+                                    <MenuItem key={loc.id} value={loc.id}>
+                                        {getLocationTitle(loc.id)}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseModal}>{t("librarian.cancel")}</Button>
-                        <Button variant="contained" color="primary" onClick={handleSaveBook}>{newBook.id !== 0 ? t("librarian.saveChanges") : t("librarian.addBook")}</Button>
+                        <Button onClick={() => setOpenModal(false)}>{t("librarian.cancel")}</Button>
+                        <Button variant="contained" onClick={handleSaveBook}>{t("librarian.saveChanges")}</Button>
                     </DialogActions>
                 </Dialog>
             </Container>
