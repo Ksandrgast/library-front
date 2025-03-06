@@ -16,8 +16,7 @@ import { getLocalizedValue } from "../../utils/LocaleUtil";
 import { fetchFromAPI } from "../../utils/api";
 
 interface Category {
-    id: number;
-    name: string;
+    id: string;
     titleEn: string;
     titleRu: string;
     titleKk: string;
@@ -59,7 +58,7 @@ const Header: React.FC = () => {
 
     const handleClearSearch = () => {
         setSearchQuery("");
-        navigate(location.pathname.startsWith("/admin") ? "/admin" : "/");
+        navigate(location.pathname.startsWith("/librarian") ? "/librarian" : "/");
     };
 
     const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -76,10 +75,10 @@ const Header: React.FC = () => {
         setMenuAnchor(null);
     };
 
-    const handleCategorySelect = (category: string) => {
+    const handleCategorySelect = (id: string) => {
         const params = new URLSearchParams(location.search);
-        params.set("category", category);
-        navigate(location.pathname.startsWith("/admin") ? `/admin?${params.toString()}` : `/?${params.toString()}`);
+        params.set("category", id);
+        navigate(location.pathname.startsWith("/librarian") ? `/librarian?${params.toString()}` : `/?${params.toString()}`);
         setMenuAnchor(null);
     };
 
@@ -88,7 +87,7 @@ const Header: React.FC = () => {
         if (searchQuery) {
             params.set("search", searchQuery);
         }
-        navigate(location.pathname.startsWith("/admin") ? `/admin?${params.toString()}` : `/?${params.toString()}`);
+        navigate(location.pathname.startsWith("/librarian") ? `/librarian?${params.toString()}` : `/?${params.toString()}`);
     }, [location.pathname, location.search, navigate, searchQuery]);
 
     return (
@@ -99,7 +98,7 @@ const Header: React.FC = () => {
                 </Button>
                 <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
                     {categories.map((category) => (
-                        <MenuItem key={category.id} onClick={() => handleCategorySelect(category.name)}>
+                        <MenuItem key={category.id} onClick={() => handleCategorySelect(category.id)}>
                             <CategoryIcon fontSize="small" sx={{ mr: 1 }} />
                             {getLocalizedValue(category, i18n.language, "title")}
                         </MenuItem>

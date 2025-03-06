@@ -6,19 +6,19 @@
     "name": "BookNest"
   },
   "login": {
-    "title": "Кіру",
+    "title": "Жүйеге кіру",
     "username": "Пайдаланушы аты",
-    "password": "Құпия сөз",
+    "password": "Құпиясөз",
     "button": "Кіру",
-    "success": "Сәтті кіру",
-    "error": "Қате логин немесе құпия сөз",
+    "success": "Сәтті кіру!",
+    "error": "Кіру қатесі",
     "login": "Кіру",
     "register": "Тіркелу"
   },
   "user": {
     "greeting": "Қош келдіңіз, {{name}}!",
     "logout": "Шығу",
-    "userInfo":  "Пайдаланушы: {{name}}, Рөлі: {{role}}"
+    "userInfo": "Пайдаланушы: {{name}}, Рөлі: {{role}}"
   },
   "mainPage": {
     "welcome": "Кітапханаға қош келдіңіз",
@@ -28,6 +28,7 @@
     "borrowPeriod": "Брондау мерзімін енгізіңіз (күндер)",
     "bookNow": "Брондау",
     "author": "Автор",
+    "yearField": "Шығарылған жыл",
     "close": "Жабу",
     "borrowPeriodNote": "Қарызға алу мерзімі {{maxDays}} күннен аспауы керек.",
     "noResults": "Нәтижелер табылмады"
@@ -49,18 +50,20 @@
     "select_period": "Мерзімді таңдаңыз"
   },
   "librarian": {
-    "title": "Әкімшілік панелі",
+    "title": "Кітапханашының беті",
     "addBook": "Кітап қосу",
     "editBook": "Кітапты өңдеу",
-    "saveChanges": "Өзгерістерді сақтау",
-    "cancel": "Бас тарту",
-    "bookTitle": "Атауы",
-    "bookAuthor": "Авторы",
-    "bookDescription": "Сипаттамасы",
     "edit": "Өңдеу",
+    "cancel": "Болдырмау",
+    "saveChanges": "Өзгерістерді сақтау",
     "titleField": "Атауы",
-    "authorField": "Авторы",
-    "descriptionField": "Сипаттамасы"
+    "authorsField": "Авторлар",
+    "yearField": "Шығарылған жыл",
+    "descriptionField": "Сипаттама",
+    "category": "Санат",
+    "location": "Орналасуы",
+    "quantity": "Саны",
+    "noBooksFound": "Кітаптар табылмады"
   },
   "admin": {
     "title": "Кітапханашы панелі"
@@ -72,24 +75,61 @@
   },
   "categories": {
     "title": "Санаттар",
-    "name": "Атауы (латиница)",
-    "titleRu": "Атауы (орысша)",
-    "titleKk": "Атауы (қазақша)",
-    "titleEn": "Атауы (ағылшынша)",
-    "add": "Санат қосу"
+    "name": "Атауы",
+    "titleRu": "Атауы (орыс)",
+    "titleKk": "Атауы (қаз)",
+    "titleEn": "Атауы (ағыл)",
+    "add": "Санатты қосу"
   },
   "locations": {
-    "title": "Сақтау мекенжайлары",
+    "title": "Мекенжайлар",
     "floor": "Қабат",
-    "room": "Бөлме/қойма",
+    "room": "Бөлме",
     "row": "Қатар",
-    "shelf": "Сөре/бөлім",
+    "shelf": "Сөре",
     "add": "Мекенжай қосу"
   },
+  "users": {
+    "title": "Пайдаланушыларды басқару",
+    "username": "Пайдаланушының аты",
+    "email": "Email",
+    "role": "Рөл",
+    "changeRole": "Рөлді өзгерту",
+    "selectRole": "Рөлді таңдаңыз",
+    "updateSuccess": "Пайдаланушы рөлі сәтті жаңартылды"
+  },
   "error": {
-    "fetchCategoriesFailed": "Санаттарды жүктеу қатесі.",
-    "fetchLocationsFailed": "Мекенжайларды жүктеу қатесі.",
-    "addCategoryFailed": "Санатты қосу мүмкін болмады.",
-    "addLocationFailed": "Мекенжайды қосу мүмкін болмады."
+    "fetchCategoriesFailed": "Санаттарды жүктеу сәтсіз аяқталды",
+    "fetchLocationsFailed": "Мекенжайларды жүктеу сәтсіз аяқталды",
+    "updateFailed": "Жаңарту қатесі",
+    "deleteFailed": "Жою қатесі",
+    "required": "Бұл өріс міндетті",
+    "requiredFields": "Барлық өрістер толтырылуы керек",
+    "addCategoryFailed": "Санатты қосу сәтсіз аяқталды",
+    "addLocationFailed": "Мекенжайды қосу сәтсіз аяқталды",
+    "badRequest": "Қате сұраныс.",
+    "unauthorized": "Қате логин немесе құпиясөз.",
+    "notFound": "Пайдаланушы табылмады.",
+    "serverError": "Сервер қатесі. Кейінірек қайталап көріңіз.",
+    "unknown": "Белгісіз қате.",
+    "updateRoleFailed": "Пайдаланушы рөлін жаңарту сәтсіз аяқталды"
+  },
+  "register": {
+    "title": "Тіркелу",
+    "credentials": "Есептік деректер",
+    "personalInfo": "Жеке ақпарат",
+    "login": "Логин",
+    "email": "Электрондық пошта",
+    "password": "Құпия сөз",
+    "firstName": "Аты",
+    "lastName": "Тегі",
+    "phone": "Телефон",
+    "button": "Тіркелу",
+    "error": "Тіркелу қатесі"
+  },
+  "roles": {
+    "reader": "Оқырман",
+    "librarian": "Кітапханашы",
+    "admin": "Әкімші"
   }
 }

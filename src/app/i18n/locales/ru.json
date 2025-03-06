@@ -6,12 +6,12 @@
     "name": "BookNest"
   },
   "login": {
-    "title": "Вход",
-    "username": "Логин",
+    "title": "Вход в систему",
+    "username": "Имя пользователя",
     "password": "Пароль",
     "button": "Войти",
-    "success": "Успешный вход",
-    "error": "Неверный логин или пароль",
+    "success": "Успешный вход!",
+    "error": "Ошибка входа",
     "login": "Войти",
     "register": "Регистрация"
   },
@@ -28,6 +28,7 @@
     "borrowPeriod": "Введите период бронирования (дни)",
     "bookNow": "Забронировать",
     "author": "Автор",
+    "yearField": "Год издания",
     "close": "Закрыть",
     "borrowPeriodNote": "Максимальный срок бронирования — {{maxDays}} дней.",
     "noResults": "Результаты не найдены"
@@ -49,18 +50,20 @@
     "select_period": "Выберите период"
   },
   "librarian": {
-    "title": "Панель библиотекаря",
+    "title": "Страница библиотекаря",
     "addBook": "Добавить книгу",
     "editBook": "Редактировать книгу",
-    "saveChanges": "Сохранить изменения",
-    "cancel": "Отмена",
-    "bookTitle": "Название",
-    "bookAuthor": "Автор",
-    "bookDescription": "Описание",
     "edit": "Редактировать",
+    "cancel": "Отмена",
+    "saveChanges": "Сохранить изменения",
     "titleField": "Название",
-    "authorField": "Автор",
-    "descriptionField": "Описание"
+    "authorsField": "Авторы",
+    "yearField": "Год издания",
+    "descriptionField": "Описание",
+    "category": "Категория",
+    "location": "Расположение",
+    "quantity": "Количество",
+    "noBooksFound": "Книги не найдены"
   },
   "admin": {
     "title": "Панель администратора"
@@ -72,24 +75,61 @@
   },
   "categories": {
     "title": "Категории",
-    "name": "Название (латиницей)",
-    "titleRu": "Название (русский)",
-    "titleKk": "Название (казахский)",
-    "titleEn": "Название (английский)",
+    "name": "Название",
+    "titleRu": "Название (рус)",
+    "titleKk": "Название (каз)",
+    "titleEn": "Название (англ)",
     "add": "Добавить категорию"
   },
   "locations": {
-    "title": "Адреса хранения",
+    "title": "Адреса",
     "floor": "Этаж",
-    "room": "Комната/склад",
+    "room": "Комната",
     "row": "Ряд",
-    "shelf": "Полка/секция",
+    "shelf": "Полка",
     "add": "Добавить адрес"
   },
+  "users": {
+    "title": "Управление пользователями",
+    "username": "Имя пользователя",
+    "email": "Email",
+    "role": "Роль",
+    "changeRole": "Изменить роль",
+    "selectRole": "Выберите роль",
+    "updateSuccess": "Роль пользователя успешно обновлена"
+  },
   "error": {
-    "fetchCategoriesFailed": "Ошибка загрузки категорий.",
-    "fetchLocationsFailed": "Ошибка загрузки адресов.",
-    "addCategoryFailed": "Не удалось добавить категорию.",
-    "addLocationFailed": "Не удалось добавить адрес."
+    "fetchCategoriesFailed": "Не удалось загрузить категории",
+    "fetchLocationsFailed": "Не удалось загрузить адреса",
+    "updateFailed": "Ошибка при обновлении",
+    "deleteFailed": "Ошибка при удалении",
+    "required": "Это поле обязательно для заполнения",
+    "requiredFields": "Все поля должны быть заполнены",
+    "addCategoryFailed": "Не удалось добавить категорию",
+    "addLocationFailed": "Не удалось добавить адрес",
+    "badRequest": "Некорректный запрос.",
+    "unauthorized": "Неверный логин или пароль.",
+    "notFound": "Пользователь не найден.",
+    "serverError": "Ошибка сервера. Попробуйте позже.",
+    "unknown": "Неизвестная ошибка.",
+    "updateRoleFailed": "Не удалось обновить роль пользователя."
+  },
+  "register": {
+    "title": "Регистрация",
+    "credentials": "Учетные данные",
+    "personalInfo": "Личная информация",
+    "login": "Логин",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "phone": "Телефон",
+    "button": "Зарегистрироваться",
+    "error": "Ошибка регистрации"
+  },
+  "roles": {
+    "reader": "Читатель",
+    "librarian": "Библиотекарь",
+    "admin": "Администратор"
   }
 }

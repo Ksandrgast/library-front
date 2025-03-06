@@ -1,43 +1,46 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 interface User {
     id: number;
+    login: string;
     name: string;
-    role: string;
-    avatar: string;
+    role: "admin" | "librarian" | "user";
+    avatar?: string;
 }
 
 interface AuthContextType {
     user: User | null;
-    login: (userData: User) => void;
+    isLoading: boolean;
+    login: (token: string) => void;
     logout: () => void;
     isAdmin: () => boolean;
     isLibrarian: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const TOKEN_EXPIRATION = parseInt(process.env.REACT_APP_TOKEN_EXPIRATION || "1", 10); // По умолчанию 1 час
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Функция для получения и декодирования токена
     const getUserFromToken = (): User | null => {
-        const token = Cookies.get("token"); // Получаем JWT токен из куков
-        if (!token) return null; // Если токена нет, возвращаем null
+        const token = Cookies.get("token");
+        if (!token) return null;
 
         try {
-            // Симулируем декодирование токена (в реальном коде используй jwt-decode)
-            const mockUser: User = {
-                id: 1,
-                name: "Сидоров Иван",
-                role: "admin", // или "user"
-                avatar: "https://via.placeholder.com/40", // Заглушка для аватара
+            const decoded: any = jwtDecode(token);
+            return {
+                id: decoded.id,
+                login: decoded.login,
+                name: decoded.name,
+                role: decoded.role,
+                avatar: decoded.avatar,
             };
-
-            return mockUser;
         } catch (error) {
             console.error("Ошибка декодирования токена:", error);
             return null;
@@ -49,11 +52,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (storedUser) {
             setUser(storedUser);
         }
+        setIsLoading(false); // Завершаем загрузку после получения данных
     }, []);
 
-    const login = (userData: User) => {
-        setUser(userData);
-        Cookies.set("token", "mocked.jwt.token", { expires: 1 }); // Устанавливаем фейковый токен
+    const login = (token: string) => {
+        Cookies.set("token", token, { expires: TOKEN_EXPIRATION / 24 });
+        const loggedInUser = getUserFromToken();
+        setUser(loggedInUser);
     };
 
     const logout = () => {
@@ -66,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isLibrarian = () => user?.role === "librarian";
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAdmin, isLibrarian }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, isAdmin, isLibrarian }}>
             {children}
         </AuthContext.Provider>
     );

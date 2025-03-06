@@ -21,8 +21,8 @@
     "username": "Username",
     "password": "Password",
     "button": "Sign In",
-    "success": "Login successful",
-    "error": "Invalid username or password",
+    "success": "Login successful!",
+    "error": "Login error",
     "login": "Login",
     "register": "Register"
   },
@@ -39,6 +39,7 @@
     "borrowPeriod": "Enter borrowing period (days)",
     "bookNow": "Reserve",
     "author": "Author",
+    "yearField": "Year",
     "close": "Close",
     "borrowPeriodNote": "Maximum borrowing period is {{maxDays}} days.",
     "noResults": "No results found"
@@ -60,18 +61,20 @@
     "select_period": "Select period"
   },
   "librarian": {
-    "title": "Librarian Panel",
+    "title": "Librarian Page",
     "addBook": "Add Book",
     "editBook": "Edit Book",
-    "saveChanges": "Save Changes",
-    "cancel": "Cancel",
-    "bookTitle": "Title",
-    "bookAuthor": "Author",
-    "bookDescription": "Description",
     "edit": "Edit",
+    "cancel": "Cancel",
+    "saveChanges": "Save Changes",
     "titleField": "Title",
-    "authorField": "Author",
-    "descriptionField": "Description"
+    "authorsField": "Authors",
+    "yearField": "Year",
+    "descriptionField": "Description",
+    "category": "Category",
+    "location": "Location",
+    "quantity": "Quantity",
+    "noBooksFound": "No books found"
   },
   "admin": {
     "title": "Admin Panel"
@@ -83,24 +86,62 @@
   },
   "categories": {
     "title": "Categories",
-    "name": "Name (Latin)",
-    "titleRu": "Name (Russian)",
-    "titleKk": "Name (Kazakh)",
-    "titleEn": "Name (English)",
-    "add": "Add category"
+    "name": "Name",
+    "titleRu": "Title (RU)",
+    "titleKk": "Title (KZ)",
+    "titleEn": "Title (EN)",
+    "add": "Add Category"
   },
   "locations": {
-    "title": "Storage Locations",
+    "title": "Locations",
     "floor": "Floor",
-    "room": "Room/Warehouse",
+    "room": "Room",
     "row": "Row",
-    "shelf": "Shelf/Section",
-    "add": "Add location"
+    "shelf": "Shelf",
+    "add": "Add Location"
+  },
+  "users": {
+    "title": "User Management",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "changeRole": "Change Role",
+    "selectRole": "Select Role",
+    "updateSuccess": "User role updated successfully",
+    "updateError": "Error updating user role"
   },
   "error": {
-    "fetchCategoriesFailed": "Failed to load categories.",
-    "fetchLocationsFailed": "Failed to load locations.",
-    "addCategoryFailed": "Failed to add category.",
-    "addLocationFailed": "Failed to add location."
+    "fetchCategoriesFailed": "Failed to fetch categories",
+    "fetchLocationsFailed": "Failed to fetch locations",
+    "updateFailed": "Update failed",
+    "deleteFailed": "Delete failed",
+    "required": "This field is required",
+    "requiredFields": "All fields must be filled in",
+    "addCategoryFailed": "Failed to add category",
+    "addLocationFailed": "Failed to add location",
+    "badRequest": "Bad request.",
+    "unauthorized": "Invalid login or password.",
+    "notFound": "User not found.",
+    "serverError": "Server error. Please try again later.",
+    "unknown": "Unknown error.",
+    "updateRoleFailed": "Failed to update user role."
+  },
+  "register": {
+    "title": "Registration",
+    "credentials": "Account Credentials",
+    "personalInfo": "Personal Information",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone",
+    "button": "Register",
+    "error": "Registration failed"
+  },
+  "roles": {
+    "reader": "Reader",
+    "librarian": "Librarian",
+    "admin": "Administrator"
   }
 }
