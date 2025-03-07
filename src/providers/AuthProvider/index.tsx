@@ -7,7 +7,7 @@ interface User {
     id: number;
     login: string;
     name: string;
-    role: "admin" | "librarian" | "user";
+    role: "admin" | "librarian" | "reader";
     avatar?: string;
 }
 
@@ -18,6 +18,7 @@ interface AuthContextType {
     logout: () => void;
     isAdmin: () => boolean;
     isLibrarian: () => boolean;
+    isReader: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,9 +70,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const isAdmin = () => user?.role === "admin";
     const isLibrarian = () => user?.role === "librarian";
+    const isReader = () => user?.role === "reader";
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout, isAdmin, isLibrarian }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, isAdmin, isLibrarian, isReader }}>
             {children}
         </AuthContext.Provider>
     );

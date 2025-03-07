@@ -9,6 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CategoryIcon from "@mui/icons-material/Category";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import PersonIcon from "@mui/icons-material/Person";
 import UserMenu from "../UserMenu";
 import Cookies from "js-cookie";
 import { useAuth } from "../../providers/AuthProvider";
@@ -28,7 +29,7 @@ const Header: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-    const { isAdmin, isLibrarian } = useAuth();
+    const { isAdmin, isLibrarian, isReader } = useAuth();
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
@@ -97,26 +98,37 @@ const Header: React.FC = () => {
                     <MenuIcon />
                 </Button>
                 <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
+                    {isAdmin() && [
+                        <MenuItem key="admin-panel" onClick={() => navigate("/admin")}>
+                            <AdminPanelSettingsIcon fontSize="small" sx={{ mr: 1 }} />
+                            {t("admin.title")}
+                        </MenuItem>,
+                        <Divider key="divider" />
+                    ]}
+                    {isLibrarian() && [
+                        <MenuItem key="librarian-panel" onClick={() => navigate("/librarian")}>
+                            <LibraryBooksIcon fontSize="small" sx={{ mr: 1 }} />
+                            {t("librarian.title")}
+                        </MenuItem>,
+                        <MenuItem key="bookings-panel" onClick={() => navigate("/bookings")}>
+                            <PersonIcon fontSize="small" sx={{ mr: 1 }} />
+                            {t("bookings.bookings")}
+                        </MenuItem>,
+                        <Divider key="divider" />
+                    ]}
+                    { isReader() && [
+                        <MenuItem key="myBookings-panel" onClick={() => navigate("/myBookings")}>
+                            <PersonIcon fontSize="small" sx={{ mr: 1 }} />
+                            {t("bookings.myBookings")}
+                        </MenuItem>,
+                        <Divider key="divider" />
+                    ]}
                     {categories.map((category) => (
                         <MenuItem key={category.id} onClick={() => handleCategorySelect(category.id)}>
                             <CategoryIcon fontSize="small" sx={{ mr: 1 }} />
                             {getLocalizedValue(category, i18n.language, "title")}
                         </MenuItem>
                     ))}
-                    {isAdmin() && [
-                        <Divider key="divider" />,
-                        <MenuItem key="admin-panel" onClick={() => navigate("/admin")}>
-                            <AdminPanelSettingsIcon fontSize="small" sx={{ mr: 1 }} />
-                            {t("admin.title")}
-                        </MenuItem>
-                    ]}
-                    {isLibrarian() && [
-                        <Divider key="divider" />,
-                        <MenuItem key="librarian-panel" onClick={() => navigate("/librarian")}>
-                            <LibraryBooksIcon fontSize="small" sx={{ mr: 1 }} />
-                            {t("librarian.title")}
-                        </MenuItem>
-                    ]}
                 </Menu>
 
                 <Typography variant="h6" sx={{ cursor: "pointer" }} onClick={() => navigate("/")}>

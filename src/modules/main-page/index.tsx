@@ -9,18 +9,16 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    Select,
-    MenuItem,
     TextField,
-    SelectChangeEvent,
     TablePagination,
     CircularProgress,
-    Alert
+    Alert, Snackbar
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchFromAPI } from "../../utils/api";
+import {useAuth} from "../../providers/AuthProvider";
 
 const ITEMS_PER_PAGE = 10;
 const MAX_BORROW_DAYS = 30;
@@ -31,7 +29,6 @@ const MainPage: React.FC = () => {
 
     const [rowsPerPage, setRowsPerPage] = useState(ITEMS_PER_PAGE);
     const [selectedBook, setSelectedBook] = useState<any>(null);
-    const [bookingType, setBookingType] = useState("inside");
     const [bookingPeriod, setBookingPeriod] = useState("");
     const [openModal, setOpenModal] = useState(false);
     const [page, setPage] = useState(0);
@@ -40,6 +37,10 @@ const MainPage: React.FC = () => {
     const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [bookingError, setBookingError] = useState<string | null>(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const { isLibrarian } = useAuth();
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -70,10 +71,6 @@ const MainPage: React.FC = () => {
         );
     }, [location.search, books]);
 
-    const handleBookingTypeChange = (event: SelectChangeEvent<string>) => {
-        setBookingType(event.target.value);
-    };
-
     const handleBookingPeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value.replace(/\D/g, "");
         if (value.length > 2) value = value.slice(0, 2);
@@ -92,11 +89,39 @@ const MainPage: React.FC = () => {
 
     const handleCloseModal = () => {
         setOpenModal(false);
+        setBookingError(null);
+        setBookingPeriod("");
     };
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    const handleBooking = async () => {
+        if (!selectedBook) return;
+        if(!bookingPeriod) {
+            setBookingError(t("mainPage.bookingError") + t("mainPage.selectPeriod"));
+            return;
+        }
+        try {
+            await fetchFromAPI("/bookings", {
+                method: "POST",
+                body: JSON.stringify({
+                    bookId: selectedBook.id,
+                    startDate: new Date(),
+                    endDate: new Date(Date.now() + parseInt(bookingPeriod) * 24 * 60 * 60 * 1000),
+                })
+            })
+            setSnackbarOpen(true); // Показываем уведомление
+            handleCloseModal(); // Закрываем модальное окно
+        } catch (err) {
+            if (err instanceof Error) {
+                setBookingError(t("mainPage.bookingError") + err.message);
+            } else {
+                setError(t("mainPage.bookingError"));
+            }
+        }
     };
 
     return (
@@ -149,32 +174,25 @@ const MainPage: React.FC = () => {
                         <Typography>{t("mainPage.author")}: {selectedBook?.authors.join(", ")}</Typography>
                         <Typography>{t("mainPage.yearField")}: {selectedBook?.year}</Typography>
                         <Typography>{selectedBook?.description}</Typography>
-                        <Select value={bookingType} onChange={handleBookingTypeChange} fullWidth sx={{ mt: 2 }}>
-                            <MenuItem value="inside">{t("mainPage.readInside")}</MenuItem>
-                            <MenuItem value="outside">{t("mainPage.borrowOutside")}</MenuItem>
-                        </Select>
-                        {bookingType === "outside" && (
-                            <TextField
-                                label={t("mainPage.borrowPeriod")}
-                                variant="outlined"
-                                fullWidth
-                                value={bookingPeriod}
-                                onChange={handleBookingPeriodChange}
-                                sx={{ mt: 2 }}
-                                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", maxLength: 2 }}
-                            />
-                        )}
-                        {bookingType === "outside" && (
-                            <Typography variant="caption" color="textSecondary">
-                                {t("mainPage.borrowPeriodNote", { maxDays: MAX_BORROW_DAYS })}
-                            </Typography>
-                        )}
+                        { !isLibrarian() && <TextField
+                            label={t("mainPage.borrowPeriod")}
+                            variant="outlined"
+                            fullWidth
+                            value={bookingPeriod}
+                            onChange={handleBookingPeriodChange}
+                            sx={{ mt: 2 }}
+                            inputProps={{ inputMode: "numeric", pattern: "[0-9]*", maxLength: 2 }}
+                        /> }
+                        {bookingError && <Alert severity="error" sx={{ mt: 2 }}>{bookingError}</Alert>}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseModal}>{t("mainPage.close")}</Button>
-                        <Button variant="contained" color="primary">{t("mainPage.bookNow")}</Button>
+                        { !isLibrarian() && <Button variant="contained" color="primary" onClick={handleBooking}>{t("mainPage.bookNow")}</Button> }
                     </DialogActions>
                 </Dialog>
+                <Snackbar open={snackbarOpen} autoHideDuration={4000} anchorOrigin={{ vertical: "top", horizontal: "right" }} style={{ top: "100px" }} onClose={() => setSnackbarOpen(false)} >
+                    <Alert severity="success" >{t("mainPage.bookingSuccess")}</Alert>
+                </Snackbar>
             </Container>
         </Layout>
     );

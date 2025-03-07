@@ -9,10 +9,13 @@ import LibrarianPage from "./pages/librarian-page";
 import withAuthProtection from "./ProtectedRoute";
 import withAuthRedirect from "./AuthRedirect";
 import { useAuth } from "../../providers/AuthProvider";
+import BookingPage from "./pages/booking-page";
 
 // Обертка для защищенных маршрутов
 const ProtectedAdminPage = withAuthProtection(AdminPage, "admin");
 const ProtectedLibrarianPage = withAuthProtection(LibrarianPage, "librarian");
+const ProtectedMyBookingsPage = withAuthProtection(BookingPage, "reader");
+const ProtectedBookingsPage = withAuthProtection(BookingPage, "librarian");
 
 // Обертка для редиректа авторизованных пользователей
 const RedirectedLoginPage = withAuthRedirect(LogInPage);
@@ -24,6 +27,8 @@ const routes = [
     { path: "/register", element: <RedirectedRegisterPage /> },
     { path: "/admin", element: <ProtectedAdminPage /> },
     { path: "/librarian", element: <ProtectedLibrarianPage /> },
+    { path: "/myBookings", element: <ProtectedMyBookingsPage /> },
+    { path: "/bookings", element: <ProtectedBookingsPage /> },
     { path: "*", element: <Navigate to="/" replace /> }
 ];
 

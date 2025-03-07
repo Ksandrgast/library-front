@@ -42,7 +42,13 @@
     "yearField": "Year",
     "close": "Close",
     "borrowPeriodNote": "Maximum borrowing period is {{maxDays}} days.",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "bookingSuccess": "Booking successful!",
+    "bookingError": "Error booking the book: ",
+    "returnBook": "Return book",
+    "bookReturnedSuccess": "Book successfully returned!",
+    "bookReturnError": "Error returning the book: ",
+    "selectPeriod": "You must specify the period"
   },
   "search": {
     "placeholder": "Search for books...",
@@ -124,7 +130,9 @@
     "notFound": "User not found.",
     "serverError": "Server error. Please try again later.",
     "unknown": "Unknown error.",
-    "updateRoleFailed": "Failed to update user role."
+    "updateRoleFailed": "Failed to update user role.",
+    "loadBookings": "Error loading bookings",
+    "cancelBooking": "Error canceling booking"
   },
   "register": {
     "title": "Registration",
@@ -143,5 +151,24 @@
     "reader": "Reader",
     "librarian": "Librarian",
     "admin": "Administrator"
+  },
+  "bookings": {
+    "bookings": "Bookings",
+    "myBookings": "My Bookings",
+    "noActive": "You have no active bookings.",
+    "start": "Start Date",
+    "end": "End Date",
+    "status": "Status",
+    "cancel": "Cancel Booking",
+    "confirmCancel": "Are you sure you want to cancel this booking?",
+    "loadError": "An error occurred while loading the bookings.",
+    "noBookings": "You have no active bookings.",
+    "returnBook": "Return Book",
+    "returnError": "Error returning the book",
+    "statuses": {
+      "ACTIVE": "Active",
+      "EXPIRED": "Expired",
+      "RETURNED": "Returned"
+    }
   }
 }

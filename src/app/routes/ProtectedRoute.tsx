@@ -4,7 +4,7 @@ import { useAuth } from "../../providers/AuthProvider";
 
 const withAuthProtection = <P extends object>(
     WrappedComponent: React.ComponentType<P>,
-    requiredRole?: "admin" | "librarian"
+    requiredRole?: "admin" | "librarian" | "reader"
 ) => {
     const ProtectedComponent: React.FC<P> = (props) => {
         const { user } = useAuth();
