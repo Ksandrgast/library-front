@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { fetchFromAPI } from "../../utils/api";
-import {useAuth} from "../../providers/AuthProvider";
+import { useAuth } from "../../providers/AuthProvider";
 
 const ITEMS_PER_PAGE = 10;
 const MAX_BORROW_DAYS = 30;
@@ -34,20 +34,33 @@ const MainPage: React.FC = () => {
     const [page, setPage] = useState(0);
 
     const [books, setBooks] = useState<any[]>([]);
-    const [filteredBooks, setFilteredBooks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [bookingError, setBookingError] = useState<string | null>(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [totalBooks, setTotalBooks] = useState(0);
 
     const { isLibrarian } = useAuth();
 
+    const params = new URLSearchParams(location.search);
+    const search = params.get("search") || "";
+    const category = params.get("category") || "";
+
     useEffect(() => {
         const fetchBooks = async () => {
+            setLoading(true);
+            setError(null);
             try {
-                const data = await fetchFromAPI("/books");
-                setBooks(data);
-                setFilteredBooks(data);
+                const params = new URLSearchParams({
+                    search,
+                    category,
+                    page: page.toString(),
+                    limit: rowsPerPage.toString(),
+                });
+                const data = await fetchFromAPI(`/books?${params.toString()}`);
+
+                setBooks(data.books);  // Обновляем массив книг
+                setTotalBooks(data.total); // Обновляем общее количество книг
             } catch (err) {
                 setError("Не удалось загрузить книги. Попробуйте позже.");
             } finally {
@@ -55,21 +68,7 @@ const MainPage: React.FC = () => {
             }
         };
         fetchBooks();
-    }, []);
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const query = params.get("search") || "";
-        const category = params.get("category") || "";
-
-        setFilteredBooks(
-            books.filter(book =>
-                (query ? book.title.toLowerCase().includes(query.toLowerCase())
-                    || book.authors.some((author: string) => author.toLowerCase().includes(query.toLowerCase())) : true)
-                && (category ? book.categoryId === category : true)
-            )
-        );
-    }, [location.search, books]);
+    }, [search, category, page, rowsPerPage]);
 
     const handleBookingPeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value.replace(/\D/g, "");
@@ -112,9 +111,9 @@ const MainPage: React.FC = () => {
                     startDate: new Date(),
                     endDate: new Date(Date.now() + parseInt(bookingPeriod) * 24 * 60 * 60 * 1000),
                 })
-            })
-            setSnackbarOpen(true); // Показываем уведомление
-            handleCloseModal(); // Закрываем модальное окно
+            });
+            setSnackbarOpen(true);
+            handleCloseModal();
         } catch (err) {
             if (err instanceof Error) {
                 setBookingError(t("mainPage.bookingError") + err.message);
@@ -134,9 +133,9 @@ const MainPage: React.FC = () => {
                 {loading && <CircularProgress />}
                 {error && <Alert severity="error">{error}</Alert>}
 
-                {!loading && !error && filteredBooks.length > 0 ? (
+                {!loading && !error && books.length > 0 ? (
                     <>
-                        {filteredBooks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((book) => (
+                        {books.map((book) => (
                             <Card key={book.id} sx={{ mt: 2, cursor: "pointer" }} onClick={() => handleBookSelection(book)}>
                                 <CardContent>
                                     <Typography variant="h5">{book.title}</Typography>
@@ -149,7 +148,7 @@ const MainPage: React.FC = () => {
                         ))}
                         <TablePagination
                             component="div"
-                            count={filteredBooks.length}
+                            count={totalBooks} // Указываем общее количество книг из бэка
                             page={page}
                             onPageChange={handleChangePage}
                             rowsPerPage={rowsPerPage}

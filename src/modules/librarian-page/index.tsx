@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
     Container, Typography, TextField, Button, Card, CardContent, Dialog, DialogTitle,
-    DialogContent, DialogActions, TablePagination, FormControl, InputLabel, Select, MenuItem
+    DialogContent, DialogActions, TablePagination, FormControl, InputLabel, Select, MenuItem, Box
 } from "@mui/material";
 import Layout from "../../components/Layout";
 import { useTranslation } from "react-i18next";
@@ -34,7 +34,7 @@ interface Book {
     locationId: string;
 }
 
-const emtyBook = {
+const emptyBook = {
     id: "",
     title: "",
     authors: [],
@@ -47,28 +47,36 @@ const emtyBook = {
 
 const LibrarianPage: React.FC = () => {
     const { t, i18n } = useTranslation();
+    const location = useLocation();
     const [books, setBooks] = useState<Book[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [locations, setLocations] = useState<Location[]>([]);
-    const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
-    const [newBook, setNewBook] = useState<Book>(emtyBook);
+    const [newBook, setNewBook] = useState<Book>(emptyBook);
     const [openModal, setOpenModal] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [total, setTotal] = useState(0);
 
-    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const search = params.get("search") || "";
+    const category = params.get("category") || "";
 
     useEffect(() => {
-        const loadBooks = async () => {
+        const fetchBooks = async () => {
             try {
-                const booksData = await fetchFromAPI("/books");
-                setBooks(booksData);
-                setFilteredBooks(booksData);
+                const params = new URLSearchParams({
+                    search,
+                    category,
+                    page: page.toString(),
+                    limit: rowsPerPage.toString(),
+                });
+                const response = await fetchFromAPI(`/books?${params.toString()}`);
+                setBooks(response.books);
+                setTotal(response.total);
             } catch (error) {
                 console.error("Ошибка загрузки книг:", error);
             }
         };
-
         const loadCategories = async () => {
             try {
                 const categoriesData = await fetchFromAPI("/categories");
@@ -87,24 +95,19 @@ const LibrarianPage: React.FC = () => {
             }
         };
 
-        loadBooks();
+        fetchBooks();
         loadCategories();
         loadLocations();
-    }, []);
+    }, [search, category, page, rowsPerPage]);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const query = params.get("search") || "";
-        const category = params.get("category") || "";
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
 
-        setFilteredBooks(
-            books.filter(book =>
-                (query ? book.title.toLowerCase().includes(query.toLowerCase())
-                    || book.authors.some((author: string) => author.toLowerCase().includes(query.toLowerCase())) : true)
-                && (category ? book.categoryId === category : true)
-            )
-        );
-    }, [location.search, books]);
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     const handleInputChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
         const { name, value } = event.target;
@@ -130,7 +133,7 @@ const LibrarianPage: React.FC = () => {
     };
 
     const handleOpenModal = () => {
-        setNewBook(emtyBook);
+        setNewBook(emptyBook);
         setOpenModal(true);
     };
 
@@ -163,13 +166,15 @@ const LibrarianPage: React.FC = () => {
         }
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+    const handleDeleteBook = async (id: string) => {
+        if (!window.confirm(t("librarian.confirmDelete"))) return;
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        try {
+            await fetchFromAPI(`/books/${id}`, { method: "DELETE" });
+            setBooks(prevBooks => prevBooks.filter(book => book.id !== id));
+        } catch (error) {
+            console.error(t("errors.deleteBook"), error);
+        }
     };
 
     const getCategoryTitle = (categoryId: string) => {
@@ -191,7 +196,7 @@ const LibrarianPage: React.FC = () => {
                 <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ mb: 2 }}>
                     {t("librarian.addBook")}
                 </Button>
-                {filteredBooks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((book) => (
+                {books.map((book) => (
                     <Card key={book.id} sx={{ mt: 2 }}>
                         <CardContent>
                             <Typography variant="h5">{book.title}</Typography>
@@ -201,20 +206,25 @@ const LibrarianPage: React.FC = () => {
                             <Typography>{t("librarian.quantity")}: {book.quantity}</Typography>
                             <Typography>{t("librarian.category")}: {getCategoryTitle(book.categoryId)}</Typography>
                             <Typography>{t("librarian.location")}: {getLocationTitle(book.locationId)}</Typography>
-                            <Button onClick={() => handleEditBook(book)}>{t("librarian.edit")}</Button>
+                            <Box display="flex" justifyContent="space-between" mt={2}>
+                                <Button onClick={() => handleEditBook(book)}>{t("librarian.edit")}</Button>
+                                <Button variant="contained" color="error" onClick={() => handleDeleteBook(book.id)}>
+                                    {t("librarian.deleteBook")}
+                                </Button>
+                            </Box>
                         </CardContent>
                     </Card>
                 ))}
                 <TablePagination
                     component="div"
-                    count={filteredBooks.length}
+                    count={total}
                     page={page}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     labelRowsPerPage={t("table.rowsPerPage")}
                     labelDisplayedRows={({ from, to, count }) =>
-                        t("table.displayedRows", { from, to, count: count !== -1 ? count : Number(t("table.moreThan", { count: to })) })
+                        t("table.displayedRows", { from, to, count: Number(count) })
                     }
                 />
                 <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth>

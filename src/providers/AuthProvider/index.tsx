@@ -22,7 +22,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const TOKEN_EXPIRATION = parseInt(process.env.REACT_APP_TOKEN_EXPIRATION || "1", 10); // По умолчанию 1 час
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -57,9 +56,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = (token: string) => {
-        Cookies.set("token", token, { expires: TOKEN_EXPIRATION / 24 });
-        const loggedInUser = getUserFromToken();
-        setUser(loggedInUser);
+        try {
+            const decoded: any = jwtDecode(token);
+            if (!decoded.exp) throw new Error("Токен не содержит информацию о сроке действия");
+
+            const expirationTime = decoded.exp * 1000; // Преобразуем в миллисекунды
+            const now = Date.now();
+            const expiresInHours = (expirationTime - now) / (1000 * 60 * 60); // Считаем часы
+
+            if (expiresInHours > 0) {
+                Cookies.set("token", token, { expires: expiresInHours / 24 }); // Переводим в дни
+                setUser(getUserFromToken());
+            } else {
+                console.error("Срок действия токена уже истек.");
+                logout();
+            }
+        } catch (error) {
+            console.error("Ошибка обработки токена:", error);
+            logout();
+        }
     };
 
     const logout = () => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    Container, Typography, Card, CardContent, CircularProgress, Button, Alert, TablePagination
+    Container, Typography, Card, CardContent, CircularProgress, Button, Alert, TablePagination, Box
 } from "@mui/material";
 import Layout from "../../components/Layout";
 import { useTranslation } from "react-i18next";
@@ -95,16 +95,19 @@ const Bookings: React.FC = () => {
                                     <Typography>{t("bookings.start")}: {new Date(booking.startDate).toLocaleDateString()}</Typography>
                                     <Typography>{t("bookings.end")}: {new Date(booking.endDate).toLocaleDateString()}</Typography>
                                     <Typography>{t("bookings.status")}: {t(`bookings.statuses.${booking.status}`)}</Typography>
-                                    {booking.status === "ACTIVE" && (
+                                    <Box display="flex" justifyContent="space-between" mt={2}>
+                                    {booking.status !== "RETURNED" && (
                                         <Button variant="contained" color="secondary" sx={{ mt: 2 }} onClick={() => handleReturnBook(booking.id)}>
                                             {t("bookings.returnBook")}
                                         </Button>
                                     )}
-                                    {booking.status === "ACTIVE" && isLibrarian() && (
+                                    {booking.status !== "RETURNED" && isLibrarian() && (
                                         <Button variant="contained" color="error" sx={{ mt: 2 }} onClick={() => handleCancelBooking(booking.id)}>
                                             {t("bookings.cancel")}
                                         </Button>
                                     )}
+
+                                </Box>
                                 </CardContent>
                             </Card>
                         ))}
